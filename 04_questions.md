@@ -58,4 +58,74 @@ tns[1:, 1:]
 
 23. The function to calculate new weights using a learning rate is: new_weight = old_weight - lr*gradient
 
-24. 
+24. A dataloader is a class from fast.ai that can take a collection (in python like a list, tuple, etc) and make it an iterator over many batches. In the context of ML, it is generally used with a list of tuples being converted into an iterator so that the training loop can iterate over an object of class dataloader in specific batches. 
+
+25. Basic steps in SGD
+```
+for batch_x, batch_y in data_loader:
+    # apply the model to make predictions
+    preds = model(batch_x)
+
+    # calculate the loss based on the predicitons. Use sigmoid here
+    loss = mnist_loss(preds, batch_y)
+
+    # calculate gradients with back propagation
+    loss.backward()
+
+    # step each parameter and clear part of the gradient after applying
+    for param in params:
+        param.data -= param.grad * lr
+        param.grad = None
+```
+
+26. Create a function that, if passed two arguments [1,2,3,4] and 'abcd', returns [(1, 'a'), (2, 'b'), (3, 'c'), (4, 'd')]. 
+```
+def create_iterable_tuples(col_1, col_2):
+  it_tup = list(zip(col_1, col_2))
+  return it_tup
+```
+
+This output structure is special for ML since you can have one item in the tuple be the training data, while the other item is the expected result for that training data. This allows for training to be simple (data paired with target). 
+
+27. View in pytorch changes the shape of a tensor without changing its contents. In the example, a rank-3 tensor was changed to a rank 2 tensor using view. 
+
+28. Bias parameters in a NN allows for flexibility in the model. If the input is zero, the equation mx+b will always be zero (since mx = 0). By adding b, the bias term, this can be changed. 
+
+29. The @ operator in python is used to perform matrix multiplicaiton. 
+
+30. The backward method in pytorch is used for backpropagation to calculate the gradient of parameters from before that have requires_grad_() by making use for the chain rule along with parital derivatives from multivariable calculus. 
+
+31. In pytorch, the gradients will accumulate if they are not zeroed out which will lead to incorrect reuslts - thus they must be set to zero after each step. 
+
+32. Learner must be passed a DataLoaders, which can be created through the DataLoader class with a training and validation data loader, a model, an optimization function, a loss function, and can optionally be passed a metric. 
+
+33. Show Python or pseudocode for the basic steps of a training loop.
+```
+def train_model(model, epochs, train_dl, valid_dl):
+
+    # loop the number of epochs
+    for i in range(epochs):
+        # train an epoch by looping through a batch
+        for train_x, train_y in train_dl:
+            preds = model(train_x)
+            loss = calc_loss(preds, train_y)
+            loss.backward
+
+            for param in params:
+                param.data -= param.grad*lr
+                param.grad = None
+        
+        # get the epoch Accuracy, assume batch_accuracy() function calculates the accuracy of any batch
+        acc_list = [batch_accuracy(valid_x, valid_y) for valid_x, valid_y in valid_dl]
+        acc = torch.stack(acc_list).mean() 
+        print("Epoch accuracy:", acc)
+```
+
+
+34. 'ReLU' is a rectified linear unit and is used as an activation function in ML (a non-linear layer between two linear layers). It takes all negative values and assigns a value of 0 and take all positive values and keeps them at their current value. Between -2 and 2, we have the piecewise function y=0 for -2<=x<=0 and then y=x for x>0. 
+
+35. An activaiton funciton is a non-linear function used to allow for non-linear relationships to be estimated very precisely by a nueral network. 
+
+36. F.relu is a python function while nn.relu is a module (object that inherits from a pytorch class). They can be used in the same way.  
+
+37. Although the universal approx theorem shows that any function can be approx as closely as needed using a single nonlinearity, we normally use more bc it is proven by practitioners that by using more layers, we can use smaller matrices and get better results than we would with larger matrices and fewer layers. It is a perforamnce trade off due to how this all works in pracitce rather than a theoretical limitation (less memroy, faster training, better performance). 
