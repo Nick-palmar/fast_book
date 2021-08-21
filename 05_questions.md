@@ -2,7 +2,7 @@
 
 1. The process of first resizing on the cpu and then augmenting by performing 'warping' operations (rotating, streching, etc) is known as presizing in fast.ai. The problem with normal data augmentation is that empty edge zones are added or data can be made worse (from various different transforms occuring at different times). By first resizing to a large size on the CPU and then selecting random crops (with streching) on the GPU, we are allowing for no empty edge zones with fewer operations on the data. This way, training images are kept high quality and able to train quickly. 
 
-2. **TO DO LATER**
+2. Completed the https://regexone.com/lesson/excluding_characters? tutorial
 
 3. In most deep learning datasets, data is commonly provided in one of these two ways: individual images which can be in specific folders and have specific file names to give information about the data contained in the file (what the target variable is), or a table of data that provides the connections between data in the table and data in other file formats (such as text documents or images). 
 
@@ -98,5 +98,20 @@ softmax
 
 15. log(-2) is not defined because the domain of log is real positive numbers (not including zero). 
 
-16. 
+16. The learning rate finder rule of thumb is to train batches with varying learning rates, starting with a very small learning rate on the first minibatch and increasing the learning rate until the loss increases instead of decreases. Then, to choose a correct leanring rate, we can take the minimum and divide it by 10 or choose the last point where the learning rate was decreasing (steepest downward slope). 
 
+17. The fine_tune method first freezes the model and trains the new randomly added layer for one epoch (assuming transfer learning is being used), and then unfreezes the layers and trains them for the required number of epochs. 
+
+
+18. Use ?? to get source code for function or method in a jupyter notebook
+
+19. Discriminative learning rates come from the idea that different parts of a model in transfer learning may require different learning rates, so different learning rates are used at different layer depths to account for this. For example, we may use a slice in pytorch to set the inner most 'simple features' in pytorch to a low max learning rate and set the outer 'complex features' to higher learning rates as they have not been trained so throughly on the new data from transfer learning. 
+
+20. A python slice object is treated as a spead of values, with the inner most layer taking the lower bound of the slice, the outer most layer taking the upper bound of the slice and the layers using values that increment uniformly from the lower to the upper bound. 
+
+
+21. Early stopping is a poor choice for one cycle training because the training may not have the chance to choose smaller learning late values which could provide more improvements, that are just being skipped by the early stopping callback. Instead, it is better to train the model for scratch and train for the number of epochs in which the previous best results.  
+
+22. resnet 50 is only 50 layers deep while resnet101 is 101 layers deep. 
+
+23. to_fp16 halves the decimal floating precision of the numbers to avoid CUDA out of memory errors and train faster with 16 less decimals (only keeps 16 deciamls rather than the standard 32). It also speeds up the training.  
