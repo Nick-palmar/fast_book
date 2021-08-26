@@ -111,4 +111,21 @@ It helps to reduce the weights by limiting the capacity of the model. Large weig
 
 23. argsort in pytorch returns the indicies to sort a tensor along in ascedning manner given a dimension (axis for better term) to sort on.
 
-24. 
+24. Sorting the movies by bias does not give the same result as averaging overall movie ratings by movie because rather than only telling us if a movie is one that users do not enjoy watching (just averaging the movie rating), it tells us if the movie is one that people do not enjoy watching even if the movie profile matches up very closely with their own profile. 
+
+25. To print names and details of layers in a model, do:
+```
+learn.model
+```
+
+26. The 'bootstrapping' problem in collaborative filtering is the problem that new users/items have no previous data to associate with them so no way to calculate the weights for the latent factors of the new entries (no way of claculating the embedding vector using current methods). 
+
+27. You could deal with the boot strapping problem for new users by various approachs: averaging out the embedding vectors (although this may be bad bc the average of all embedding vectors may not be a good representation of an actual person), choosing an 'average person' from the dataset and assignining their embedding to new users, or asking a set of questions to new users and then creating a model to take the answers to these questions as inputs and output the weights of the new user's embedding vector. For new movies, you may be able to manually pick out similar movies to the current movie and average out their embedding vectors to create the embedding vector for the new movie. 
+
+28. Feedback loops can impact collaborative filtering systems by amplifying representatational bias in the data and possibly causing for a whole system to break down. It is especially dangerous when the feeedback loop leaks into the latent factors quickly and unknowingly. It is important to understand a userbase and continously monitior bias in the system to avoid disaster. 
+
+29. When using a neural network for collaborative filtering, we can have a different number of factors for users and movies because the user and movie embeddings will be concatenated together before being passed to the input layer of the neural network. Since there can be any number of weights for the input layer of the neural netowrk, there can be a differnet number of factors.
+
+30. nn.Sequential is used in the CollabNN model to allow for the different layers of the neural network to be called in sequence. 
+
+31. If we want to add metadata about users and items, we should use a tabular model for collaborative filtering (next section). 
