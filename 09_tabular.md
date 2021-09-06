@@ -1,3 +1,3 @@
 ## 9. Tabular queestions
 
-1. s
+1. 
