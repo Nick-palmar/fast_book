@@ -1,6 +1,6 @@
 ## NLP Deep Dive: RNNs
 
-1. Self-supervised learning means not giving labels to a model - just giving it lots and lots of data and the model learning from the data by creating labels automatically. In NLP applications, models are often given lots of words and the labels are simply the next word after the current word. The labels are embedded in the independant variable. 
+1. Self-supervised learning means not giving labels to a model - just giving it lots and lots of data and the model learning from the data by creating labels automatically. In NLP applications such as language models, models are often given lots of words and the labels are simply the next word after the current word. The labels are embedded in the independant variable. 
 
 2. A language model is a model trained to guess the next word in text after reading the previous ones. 
 
@@ -26,4 +26,10 @@
 
 13. Repeated characters are replaced with a token showing # of reps and the rep character so that the model can encode infomation about repeated characters in the embedding matrix rather than seeing the same embedding multiple times repeated. 
 
-14. 
+14. Numericalization is the process of mapping tokens to integers. This is done by first creating a vocab - a list of all possible words and then replacing the tokens/words with their index in this vocab. 
+
+15. Some tokens may be replaced by "unknown word" token because the default max_vocab for the fastai numericalize method is 60,000 words (most common 60,000 words). The less commons words may show as unknown characters to prevent having huge embedding matrices and also preventing rare words from being 'learned' (since the rare words do not have enough data to be 'learned'). 
+
+16. Note that the batch size is 64 in this case, and the sequence length for each row in the batch is also 64 tokens. The first row of the first batch contains the first 64 tokens of the first ministream (tokens 1-64). The second row of the first batch contains the beginnning of the second ministream (we do not know which tokens because we do not know the length of an entire row in the batch; this would be calculated by n_tokens/batch_size). The first row of the second batch contains the next 64 tokens of the first ministream (tokens 65-128).  
+
+17. 
