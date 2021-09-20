@@ -32,4 +32,15 @@
 
 16. Note that the batch size is 64 in this case, and the sequence length for each row in the batch is also 64 tokens. The first row of the first batch contains the first 64 tokens of the first ministream (tokens 1-64). The second row of the first batch contains the beginnning of the second ministream (we do not know which tokens because we do not know the length of an entire row in the batch; this would be calculated by n_tokens/batch_size). The first row of the second batch contains the next 64 tokens of the first ministream (tokens 65-128).  
 
-17. 
+17. We need padding for text classification because all of the input tensors (the texts) must be of the same length. In order to make sure each 'ministream' is of the same lenght, similar length input tensors should be grouped together and the shorter tensors should be padded to match up in length with the longest tensor of the batch. Since our embedding layers goes from vocab_size -> hidden_size, different batches can be of different length and it will not matter. 
+**Why was padding not needed for the language model?**: The reason for this is that for language models, all of the documents are just concatenated and then split into equal-length sections. Classification models cannot just concatenate text because each section has a different label (in this case, the sentiment). 
+
+18. The embedding matrix for NLP contains a row for each token that meets a specific criteria, but is often most of the tokens in a dataset (such criteria can be max_vocab or min_occurances). Tokens do not necessarily need to be the same word (ie. uppercase and lowercase are the same token). The columns of the embedding matrix are the learned latent features for each token/row of the matrix. As such, it's shape is vocab_size x hidden/embedding_size. 
+
+19. Perplexity is a common metric used in nlp applications; calculated by torch.exp(cross_entropy_loss). This returns the average of the probabilites by softmax of the target words (undoes the effects of the log in cross entropy loss). 
+
+20. The vocab of the model must be passed to the data block class classifier so the so that the classifier uses the same word-> index mapping (for the embeddings to make sense as we already have the fine tuned language model). 
+
+21. Gradual unfreezing is an approach taken in nlp transfer learning for a classifier where layers are unfrozen one at a time (for the first few layers) before unfreezing all of the layers. This approach was shown to work well for nlp classifiers. 
+
+22. Text generation is likely to be ahead of text identification of machine generated texts because the classification/identification models can be used by the generation models to specifically beat the classification models. 
