@@ -78,3 +78,48 @@ class SimpleLMRNN(nn.Module):
  ![BPTT](https://github.com/Nick-palmar/fastai_deep_learning/blob/main/images/bptt.png?raw=true)
 
  ![BPTT and TBPTT](https://github.com/Nick-palmar/fastai_deep_learning/blob/main/images/bptt_tbptt.png?raw=true)
+
+ 13. Write code to print out the first few batches of the validation set, including converting the token IDs back into English strings, as we showed for batches of IMDb data in Chapter 10. Assume we start with seqs, a list of tensors, seqs, which is a list of tokenized and numericalized tensors
+
+ ```
+ def group_chunks(dset, bs):
+    # get the length of a group 
+    m = len(seqs)//bs
+    new_dset = L()
+
+    # loop through each possible value in m
+    for i in range(m):
+        # append (0, m, 2*m, ..., (bs-1)*m)
+        # then increment i and append (1, m+1, 2*m+1, ..., (bs-1)*m+1) etc
+        new_dset += L(dset[i+ m * j] for j in range(bs)0
+    return new_dset
+
+
+# check if the function works
+print(seqs[0], seqs[1], seqs[2])
+s_chunks = group_chunks(seqs, 64)
+# should be the same as above
+print(s_chunks[0], s_chunks[64], s_chunks[128])
+
+train_cut = int(len(seqs) * 0.8)
+bs = 64
+
+dls = DataLoaders.from_dsets(group_chunks(seqs[:train_cut], bs), group_chunks(seqs[train_cut:], bs), bs=bs, drop_last = True, shuffle = True)
+
+# print first few batches in validation set
+
+for i, (x, y) in enumerate(dls.valid):
+  if i > 3:
+    break
+  
+  words = " ".join(vocab[num] for num in x[0])
+  print(words)
+ ```
+
+
+ 14. The ModelResetter callback will call the reset() method of the model at the beginning of each epochs as well as at the beginning of the validation phase. The reset method resets the hidden state, which ensures that the model's hidden state/memory resets when it starts to read a new continous chunk of text (ie new epoch or new validaiton set for text). 
+
+
+ 15. The downside of predicting just one word for every 3 inputs is that we are losing alot of our signal since we could be predicting the next word after the current word (for all words). This way, we have more 'training data' for the model to learn from (even though the amount of data is still technically the same). This can be done by simply changing the 
+
+ 16. 
