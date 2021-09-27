@@ -129,7 +129,10 @@ for i, (x, y) in enumerate(dls.valid):
 
  18. Stacked RNNs can help improve the results even though RNNs are already quite deep because a stacked RNN provides a different linear layer with a different weight matrix between the hidden state and output activations. This new linear layers makes the model more flexible as this layer can be optimized differently from the first layer by SGD. 
 
- 19. ![Unrolled stacked RNN](https://github.com/Nick-palmar/fastai_deep_learning/blob/main/images/rnn_unrolled.png?raw=true)
+ 19. 
+ 
+
+  ![Unrolled stacked RNN](https://github.com/Nick-palmar/fastai_deep_learning/blob/main/images/rnn_unrolled.png?raw=true)
 
  ![Rolled stacked RNN](https://github.com/Nick-palmar/fastai_deep_learning/blob/main/images/rnn_rolled.png?raw=true)
 
@@ -157,3 +160,11 @@ Intuatively, sigmoid is used to determine what values to turn on and off while t
 
 
 27. 
+```
+h = torch.cat([h, input], dim=1)
+```
+In the LSTM cell, this code allows for inputs (the tokens after passing through the embedding layer) and hidden state to be concatenated before being passed to the gates in the LSTM. Since the embeddings and hidden states are being concatenated, this allows for both tensors to be of different shapes. The linear layers for the games in the LSTM NN go from (emb_sz + hidden_sz) -> (hidden_sz) after passing through the gates. 
+
+This differs from previous RNNs explored in this chapter because normally, the first line of code was: self.h = self.h + self.i_h(self.h). The hidden size and embedding had to be the same shape since they were being added together. The new concatenation and passing them through the mini-networks (gates) allows for both inputs to the gate to be of differnet size. 
+
+28. 
