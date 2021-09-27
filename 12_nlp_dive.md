@@ -122,4 +122,38 @@ for i, (x, y) in enumerate(dls.valid):
 
  15. The downside of predicting just one word for every 3 inputs is that we are losing alot of our signal since we could be predicting the next word after the current word (for all words). This way, we have more 'training data' for the model to learn from (even though the amount of data is still technically the same). This can be done by simply changing the 
 
- 16. 
+ 16. LMModel4 requires a custom loss function because the multiple signals means that after every forward passed, the stacked tensor is of shape (bs, seq, vocab_sz). This does not match up with a target of shape (bs, seq). The target itself must be flattened to an individual value (recall cross entropy loss requires the target for indexing for the NLLLoss part). So, we flatten the target by using targ.view(-1). We must match up the input by doing inp.view(bs*sl, -1) or inp.view(-1, len(vocab)). This way, each input will provide a prediction for the next word in the vocab that can be indexed into by the single target value.
+
+
+ 17.  The training for LMModel4 is unstable because the neural network is very deep, which can result in very large or small gradients. These gradients result in bad step sizes and can complicate the training. 
+
+ 18. Stacked RNNs can help improve the results even though RNNs are already quite deep because a stacked RNN provides a different linear layer with a different weight matrix between the hidden state and output activations. This new linear layers makes the model more flexible as this layer can be optimized differently from the first layer by SGD. 
+
+ 19. ![Unrolled stacked RNN](https://github.com/Nick-palmar/fastai_deep_learning/blob/main/images/rnn_unrolled.png?raw=true)
+
+ ![Rolled stacked RNN](https://github.com/Nick-palmar/fastai_deep_learning/blob/main/images/rnn_rolled.png?raw=true)
+
+
+ 20. We should get better results if we call detach less often bc it lets the weights be optimized deeper into the model's history (longer time horizon to learn from). In practice with a simple RNN, this may not happen because if it is only a single layer RNN, then it will only have one linear layer that it can train. As a result, less features can be learned even if the model is able to take gradients further in the past (by calling detch less). 
+
+ 21. A deep network can result in very large or small activations because a deeper network must perform many multiplications (linear layers). If you multiply a number < 1 many time, the number will become very small (a very small activation in the network). Conversly, multplying a number > 1 many times will result in very large activations. This is problematic because very small numbers and very large numbers are not so simple to store in the computer. Really large numbers are also less percise in floating point repr. which causes problems in gradient calculations/steps in SGD (vanishing/exploding gradients). 
+
+ 22. In a computer's floaitng point, numbers close to 0 are the most precise. 
+
+ 23. Vanishing gradients prevent training bc when the gradients get too small, the steps in SGD will not update the parameters either. This means that the model is not being trained well. 
+
+
+ 24. The two hidden states in LSTM architecture help to delegate tasks between memory and output. The first state is called the cell state, and it's specific task is to retain long short term memory. The second state is called the hidden state, and that one will focus on predicting the next token in a sequence. 
+
+ 25. The two hidden states are called cell (ct) and hidden (ht) states. 
+
+ 26. tanh is another activation function and it is related to sigmoid as it is pretty much just sigmoid rescaled from -1 to 1. Mathematically speaking, 
+ ```
+ tanh(x) = 2*sigmoid * 2*x - 1
+         = (e^x - e^-x) / (e^x = e^-x)
+ ```
+
+Intuatively, sigmoid is used to determine what values to turn on and off while tanh is used to determine the values (ie. the input and cell gates in the LSTM). 
+
+
+27. 
