@@ -167,4 +167,31 @@ In the LSTM cell, this code allows for inputs (the tokens after passing through 
 
 This differs from previous RNNs explored in this chapter because normally, the first line of code was: self.h = self.h + self.i_h(self.h). The hidden size and embedding had to be the same shape since they were being added together. The new concatenation and passing them through the mini-networks (gates) allows for both inputs to the gate to be of differnet size. 
 
-28. 
+28. chunk in pytorch allows for a tensor to be split into pieces along a dimension. You specify the nuber if chunks to create along a dimension and pytorch will return the number chunks you requested as a list of tensors. 
+
+
+29. Why the refactored version of LSTM is the same as non-refactored: The ih and hh are treating input and h separately as in the first LSTMCell. This part works slightly differently, but in effect they are treated separately then combined by addition once they both have 4*n_hidden as a dimension (after passing through their linear layer). This dimension is then chunked into 4 gates so that each gate has dimension n_hidden. The first 3 gates have sigmoid applied while the final cell gate has tanh applied. Then the same computations are applied to calculate h and c. 
+
+
+30. We can use a higher learning rate to train LMModel6 (contains LSTM layer) because LSTMs avoid the exploding gradient problem; as such they have smaller gradients so step sizes can be larger without having to worry about losing precision due to inaccuracy of fp calculation for numbers far away from zero. Since param -= param.grad * lr, a smaller param.grad from the LSTM can be combined with a larger lr to step an LSTM (compared to a vanilla RNN with possily large param.grad so requiring smaller lr). 
+
+31. The AWD-LSTM model must use the following regularizations techniques (by definition): dropout, activation regularization, and temporal activation regularization. 
+
+32. Dropout is a regularization technique where some a set of random activations are turned to zero in training. Intuatively, dropout helps neurons cooperate better and makes the activations more nosiy allowing for better generalization. 
+
+33. The activations are scaled with dropout because dropout drops a random activaitons and thus changes the magnitudes of the activations further down the model. For example, it would be problematic if instead of adding 5 activations in a model, only 2 were being added with dropout. Scaling allows for the activations in the model to remain of similar magnitude and continue to train well. 
+
+Dropout in training removes neurons with probability p and scales them by dividing activations by (1-p). In inference, scaling can still occurs as weights are multiplied by the probability of dropout 1-p ((1-p)*w). Note that the scaling is applied either in scaling or in inference-  not both (either div by 1-p in training or mult by 1-p in inference)
+
+
+34. The purpose of the line from dropout
+```
+if not self.training: return x
+```
+is to not dropout a layer if it is in inference/eval mode. When we are predicting things, we want to use all the neurons so not activations should be zeroed out if we are not training - as ensured by this line. 
+
+35. TODO
+
+36. In pytorch, so set model to be in training model do model.train() and in evaluation mode do model.eval()
+
+37. 
