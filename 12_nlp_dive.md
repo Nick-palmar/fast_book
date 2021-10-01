@@ -190,8 +190,40 @@ if not self.training: return x
 ```
 is to not dropout a layer if it is in inference/eval mode. When we are predicting things, we want to use all the neurons so not activations should be zeroed out if we are not training - as ensured by this line. 
 
-35. TODO
+35. Experiment with bernoulli
+```
+# experiment 1
+tens = torch.abs(torch.randn((4, 2))).div(3)
+bern_tens = torch.bernoulli(tens)
+print(tens, bern_tens)
+
+# experiment 2
+shaped_tens = torch.randn((3, 3))
+probs = torch.arange(start=0, end=1, step=0.1)
+for prob in probs:
+  print(f"Prob {round(prob.item(), 1)}: \n", shaped_tens.bernoulli(prob) , '\n\n')
+
+# experiment 3
+new_tens = tens.new_zeros(*tens.shape).bernoulli_(0.5)
+print(new_tens)
+```
 
 36. In pytorch, so set model to be in training model do model.train() and in evaluation mode do model.eval()
 
-37. 
+37. The equation for activation regularization is: 
+```
+# add the means of the final layer of activations squared times a multiplier, alpha
+loss += alpha * activations.pow(2).mean()
+```
+Activation regularization is different from weight decay because it is trying to make the final activations produced by the LSTM, not the parameters, as small as possible. Intuatively, it prevents the LSTM outputs/activations from overfitting. 
+
+38. The equation for temporal activation regularization is
+```
+# assume activations are shape (bs, seq, n_hidden)
+loss += beta * (activations[:, 1:] - activations[:, :-1]).pow(2).mean()
+```
+TAR is ensuring that the difference between consecutive activations is as small as possible (since words in a sequence should make sense, thus activations should not change so much as they are results of predicting tokens in a sequence). 
+We would not use TAR for computer vision problems because subsequent activations do not align with sequenced data necessarily. Different parts of an image can be completely unrelated, so TAR would not make sense. 
+
+
+39. Weight tying is the process of setting the output layer weights equal to the input (embedding) layer weights. The reason for this is that input is going from english -> hidden, while output is just going from hidden -> english in a language model. Intuatively, this mappings can be the same. 
