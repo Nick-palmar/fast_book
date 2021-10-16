@@ -51,4 +51,21 @@ alpha_grid = [(char, letter) for letter in alpha for char in alpha]
 
 ```
 
-8. 
+8. On forward call, torch's conv2d operation takes the parameters input and weight. Since the operation is accelerated on the gpu, these are both 4-dim tensors. The input parameter is expected to be of shape (batch_size, in_channels, image_height, image_width), while the weight parameter is expected to be out shape (output_channels, in_channels, kernel_height, kernel_width). Notice that in both, the in_channel isat the same place as the 2nd dimension as these must match up - each image channel must have a corresponding kernel associated with it. A single one of these layers with multiple kernels being applied to the respective channels is considered a filter. 
+
+9. A channel refers to the number of pixels/activations related a single grid location of a particular image. Channel in general can be applied to input images (RGB images have 3 channels which are the 3 colours bc each grid location is represented by 3 different pixels - RGB) and also activations (a convolutional layer can apply multiple kernels to the input channels such that each grid location ends up with a different number of activations, known as the output channels). 
+
+
+10. A covolution is the result of applying a kernel across an image. The result is that the convolution can be thought of as a special type of matrix multiplication where the weight matrix is of shape (kernel_size_flat, input_size_flat) and the second input matrix is a vector of size (input_size_flat, 1). The weight matrix has two special properties: it has 0 weights which cannot be trained and some of the weights in the matrix are 'share weights' such that they can change by SGD but must keep the same value as they are updated. The below image shows a convolutional operation in matrix multiplication form:
+
+
+ ![MM Convolution](https://github.com/Nick-palmar/fastai_deep_learning/blob/main/images/mm_conv.png?raw=true)
+
+
+
+ 11. A convolutional neural network (or CNN) is a neural network that uses convolutional layers (and can also contain dense layers). These convolutional layers contain weight matrices of kernels that are updated by SGD like in other neural networks to optimize the features picked up by the kernels (ie. no kernel is preferred over other kernels). 
+
+
+ 12. The benefits of refactoring parts of your NN definition are that it is less likely you will make mistakes since the same refactoring can be used in multiple places and it makes it easier for others to see which parts of layers are being changed (since a separate refactoring is occuring rather than just embedding new code in a large space). 
+
+ 13. 
