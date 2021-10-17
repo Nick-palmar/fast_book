@@ -68,4 +68,10 @@ alpha_grid = [(char, letter) for letter in alpha for char in alpha]
 
  12. The benefits of refactoring parts of your NN definition are that it is less likely you will make mistakes since the same refactoring can be used in multiple places and it makes it easier for others to see which parts of layers are being changed (since a separate refactoring is occuring rather than just embedding new code in a large space). 
 
- 13. 
+ 13. Flatten is a layer in a neural network that performs squeeze operations on the tensors in module form. For example, a tensor of shape (bs, channels, 1, 1) can be changed to (bs, channels) by using a flatten layer. In the MNIST CNN, flatten needs to be included as the final layer so that the output tensors are of shape (bs, categories) to match up with the expections of the loss function (cross entropy expects 2 categories). A (batch_size, categories, 1, 1) tensor would be problematic for cross entropy loss and would likely cause errors - flattening fixes this. 
+
+
+ 14. NCHW refers to the axes on tensors in the neural network as procesed by pytorch. It stands for (N, C, H, W) or (batch_size, channel, image_height, image_width). Conversely, tensorflow uses NHWC ordering for tensors (ie. channel as the final axis). 
+
+
+ 15. The third layer of MNSIT CNN has 7x7x(1168-16) multiplicaitons because the inputs have shape bsx8x7x7, outputs have shape bsx16x4x4 and the layer itself has 1168 parameters. The convolution is doing multiplication at each pixel in the 7x7 input tensor (a single kernel centered at each pixel in the 7x7 input space = a single location) and the number of weights gives the number of multiplications per location, yielding 7x7xweight_size multiplications. The weight_size is 1168-16 because 16 of the parameters are bias terms (shown by the 16 in the channel axis of the output tensor) so the remaining parameters are the weights which each have a multiplication to perform at a location (ie. 7x7xweight_size multiplications). 
